@@ -30,7 +30,7 @@ def getOrdersByUser(userId):
     orders = db['orders'].find({"userid": userId})
     for order in orders:
         output.append({
-            '_id': order['_id'],
+            '_id': str(order['_id']),
             'items': order['items'],
             'timestamp': order['timestamp'],
             'orderETA': order['orderETA'],
