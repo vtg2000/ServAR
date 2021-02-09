@@ -13,9 +13,10 @@ lucky = Blueprint('lucky', __name__)
 def getLuckyItems():
     output = []
     items = db['lucky'].find()
+    print(datetime.datetime.now())
     now = datetime.datetime.now()
     currentHour = now.hour
-    today = calendar.day_name[now.day - 1].lower() + "Score"
+    today = calendar.day_name[now.today().weekday() - 1].lower() + "Score"
     mealType = ""
     scores = []
     if currentHour > 6 and currentHour < 12:
