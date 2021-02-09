@@ -5,6 +5,7 @@ from database.db import db
 import datetime
 import calendar
 import operator
+import pymongo
 
 orders = Blueprint('orders', __name__)
 
@@ -27,7 +28,9 @@ def getAllOrders():
 @orders.route('/api/orders/<userId>')
 def getOrdersByUser(userId):
     output = []
-    orders = db['orders'].find({"userid": userId})
+    orders = db['orders'].find({
+        "userid": userId
+    }).sort('timestamp', pymongo.DESCENDING)
     for order in orders:
         output.append({
             '_id': str(order['_id']),
