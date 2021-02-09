@@ -13,7 +13,7 @@ def getNewUserId():
 
 
 @users.route('/api/users/<id>', methods=['GET'])
-def getUser(id):
+def getUserById(id):
     output = []
     appUsers = db.users.find({"userId": int(id)})
     for user in appUsers:
@@ -44,3 +44,21 @@ def postUser():
     }
 
     return jsonify({'result': output, "outcome": "Success"})
+
+
+@users.route('/api/update/users', methods=['POST'])
+def updateUser():
+    appUsers = db.users
+    username = request.json['username']
+    userId = request.json['userId']
+    phone = request.json['phone']
+    appUsers.update_one(
+        {'userId': userId},
+        {"$set": {
+            'username': username,
+            'userId': userId,
+            'phone': phone
+        }},
+        upsert=True)
+
+    return jsonify({"outcome": "Success"})

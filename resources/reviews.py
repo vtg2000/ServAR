@@ -53,15 +53,18 @@ def getReviewsForItem(itemName):
 
 
 @reviews.route('/api/ratings/item/<itemName>')
-def getRatingForItem(itemName):
+def getRatingsForItem(itemName):
     rating = 0
     count = 0
     reviews = db['reviews'].find({"itemName": itemName})
     for review in reviews:
         count += 1
         rating += review['rating']
-    # can apply any rating algo here, for now its plain average
-    output = rating / count
+    if rating == 0:
+        output = 4.5
+    else:
+        # can apply any rating algo here, for now its plain average
+        output = rating / count
     return jsonify({'result': output})
 
 

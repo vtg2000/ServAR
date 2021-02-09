@@ -19,7 +19,7 @@ def getItems():
 
 
 @items.route('/api/items/<itemName>')
-def getItem(itemName):
+def getItemByName(itemName):
     output = []
     items = db['items'].find({"itemName": itemName})
     for item in items:

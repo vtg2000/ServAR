@@ -3,6 +3,8 @@ from flask import jsonify
 from flask import request
 from database.db import db
 import datetime
+import calendar
+import operator
 
 orders = Blueprint('orders', __name__)
 
@@ -52,7 +54,7 @@ def getPendingEta():
                                     }},
                                     upsert=True)
         else:
-            output += order['orderETA'] - offset
+            output = max(output, order['orderETA'] - offset)
     return jsonify({'result': output})
 
 
@@ -82,5 +84,33 @@ def postOrder():
         'orderAmount': newOrder['orderAmount'],
         'delivered': newOrder['delivered']
     }
+
+    lucky = db.lucky
+    now = datetime.datetime.now()
+    currentHour = now.hour
+    today = calendar.day_name[now.day - 1].lower() + "Score"
+    mealType = ""
+    if currentHour > 6 and currentHour < 12:
+        mealType = "breakfastScore"
+    elif currentHour < 16:
+        mealType = "lunchScore"
+    elif currentHour < 20:
+        mealType = "snackScore"
+    elif currentHour < 24 or currentHour < 6:
+        mealType = "dinnerScore"
+
+    for item in items:
+        luckyItem = lucky.find_one({"itemName": item['itemName']})
+        lucky.update_one({"itemName": item['itemName']}, {
+            "$set": {
+                today:
+                luckyItem[today] + 0.1 * item['itemQuantity'],
+                mealType:
+                luckyItem[mealType] + 0.5 * item['itemQuantity'],
+                "popularityScore":
+                luckyItem["popularityScore"] + 1 * item['itemQuantity']
+            }
+        },
+                         upsert=True)
 
     return jsonify({'result': output, "outcome": "Success"})
