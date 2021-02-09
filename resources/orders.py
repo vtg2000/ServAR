@@ -27,7 +27,7 @@ def getAllOrders():
 @orders.route('/api/orders/<userId>')
 def getOrdersByUser(userId):
     output = []
-    orders = db['orders'].find({"userid": int(userId)})
+    orders = db['orders'].find({"userid": userId})
     for order in orders:
         output.append({
             'items': order['items'],
