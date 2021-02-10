@@ -72,6 +72,7 @@ def postOrder():
     orderAmount = request.json['orderAmount']
     delivered = False
     newOrderId = orders.insert({
+        'orderid': db.orders.find().Count() + 1,
         'userid': userid,
         'items': items,
         'timestamp': timestamp,
