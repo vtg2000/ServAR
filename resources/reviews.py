@@ -3,6 +3,7 @@ from flask import jsonify
 from flask import request
 from database.db import db
 import datetime
+import pymongo
 
 reviews = Blueprint('reviews', __name__)
 
@@ -40,7 +41,9 @@ def getReviewsByUser(userId):
 @reviews.route('/api/reviews/item/<itemName>')
 def getReviewsForItem(itemName):
     output = []
-    reviews = db['reviews'].find({"itemName": itemName})
+    reviews = db['reviews'].find({
+        "itemName": itemName
+    }).sort('timestamp', pymongo.DESCENDING)
     for review in reviews:
         output.append({
             'username': review['username'],
