@@ -72,7 +72,7 @@ def postOrder():
     orderAmount = request.json['orderAmount']
     delivered = False
     newOrderId = orders.insert({
-        # 'orderid': db.orders.find().Count() + 1,
+        'orderid': db.orders.count_documents({}) + 1,
         'userid': userid,
         'items': items,
         'timestamp': timestamp,
@@ -93,7 +93,7 @@ def postOrder():
     lucky = db.lucky
     now = datetime.datetime.now()
     currentHour = now.hour
-    today = calendar.day_name[now.day - 1].lower() + "Score"
+    today = calendar.day_name[now.today().weekday() - 1].lower() + "Score"
     mealType = ""
     if currentHour > 6 and currentHour < 12:
         mealType = "breakfastScore"
