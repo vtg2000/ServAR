@@ -114,7 +114,7 @@ def postOrder():
     lucky = db.lucky
     now = datetime.datetime.now()
     currentHour = now.hour
-    today = calendar.day_name[now.today().weekday() - 1].lower() + "Score"
+    today = calendar.day_name[now.today().weekday()].lower() + "Score"
     mealType = ""
     if currentHour > 6 and currentHour < 12:
         mealType = "breakfastScore"
@@ -130,7 +130,7 @@ def postOrder():
         lucky.update_one({"itemName": item['itemName']}, {
             "$set": {
                 today:
-                luckyItem[today] + 0.1 * item['itemQuantity'],
+                luckyItem[today] + 0.3 * item['itemQuantity'],
                 mealType:
                 luckyItem[mealType] + 0.5 * item['itemQuantity'],
                 "popularityScore":
