@@ -49,7 +49,7 @@ def getOrdersByUser(userId):
 def getOrdersByOrderId(orderid):
     output = []
     orders = db['orders'].find({
-        "orderid": orderid
+        "orderid": int(orderid)
     }).sort('timestamp', pymongo.DESCENDING)
     for order in orders:
         output.append({
