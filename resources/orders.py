@@ -45,6 +45,25 @@ def getOrdersByUser(userId):
     return jsonify({'result': output})
 
 
+@orders.route('/api/orders/order/<orderid>')
+def getOrdersByOrderId(orderid):
+    output = []
+    orders = db['orders'].find({
+        "orderid": orderid
+    }).sort('timestamp', pymongo.DESCENDING)
+    for order in orders:
+        output.append({
+            '_id': str(order['_id']),
+            'orderid': order['orderid'],
+            'items': order['items'],
+            'timestamp': order['timestamp'],
+            'orderETA': order['orderETA'],
+            'orderAmount': order['orderAmount'],
+            'delivered': order['delivered']
+        })
+    return jsonify({'result': output})
+
+
 @orders.route('/api/pendingETA')
 def getPendingEta():
     output = 0
