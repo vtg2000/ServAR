@@ -17,6 +17,7 @@ def getAllOrders():
     for order in orders:
         output.append({
             'items': order['items'],
+            'orderid': order['orderid'],
             'timestamp': order['timestamp'],
             'orderETA': order['orderETA'],
             'orderAmount': order['orderAmount'],
@@ -34,6 +35,7 @@ def getOrdersByUser(userId):
     for order in orders:
         output.append({
             '_id': str(order['_id']),
+            'orderid': order['orderid'],
             'items': order['items'],
             'timestamp': order['timestamp'],
             'orderETA': order['orderETA'],
