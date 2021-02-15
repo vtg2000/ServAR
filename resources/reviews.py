@@ -68,7 +68,7 @@ def getRatingsForItem(itemName):
     else:
         # can apply any rating algo here, for now its plain average
         output = rating / count
-    return jsonify({'result': output})
+    return jsonify({'result': output, 'count': count})
 
 
 @reviews.route('/api/reviews', methods=['POST'])
