@@ -18,7 +18,9 @@ def ordersPage():
     orders = db['orders'].find({"delivered": False})
     for order in orders:
         print(order)
-        username = db['users'].find({'userId': order['userid']})
+        username = db['users'].find({
+            'userId': order['userid']
+        }).sort('timestamp', pymongo.DESCENDING)
         for user in username:
             uname = user['username']
         output.append({
@@ -37,7 +39,7 @@ def ordersPage():
 @orders.route('/allOrders')
 def allOrdersPage():
     output = []
-    orders = db['orders'].find()
+    orders = db['orders'].find().sort('timestamp', pymongo.DESCENDING)
     for order in orders:
         print(order)
         username = db['users'].find({'userId': order['userid']})
@@ -59,7 +61,7 @@ def allOrdersPage():
 @orders.route('/api/orders')
 def getAllOrders():
     output = []
-    orders = db['orders'].find()
+    orders = db['orders'].find().sort('timestamp', pymongo.DESCENDING)
     for order in orders:
         output.append({
             'items': order['items'],
