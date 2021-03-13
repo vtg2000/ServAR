@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    
+</head>
+<body style="background-image: url('/static/bg1.jpg'); height: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        min-height: 100vh;">
+    <div >
+    <h2 style="text-align: center; color: white;">ServAR Orders</h2 style="text-align: center;">
+    <div style="margin-left: 250px; margin-right: 250px; padding-left: 50px; padding-right: 50px; background-color: white;">
+        {% for order in orders %}
+        <hr>
+        <br>
+            <div style="display: flex; flex-direction: row; width: 100%;">
+                <div style="flex: 3;"> Order id : <b>{{order._id}}</b> </div>
+                <div> Time of order : <b>{{order.timestamp}}</b> </div>
+            </div>
+            <div style="display: flex; flex-direction: row; width: 100%;">
+            <div style="flex: 3;"> User : <b>{{order.username}}</b> </div>
+            <div> ETA : <b>{{order.orderETA}} minutes</b></div>
+            </div>
+            <div style="display: flex; flex-direction: row; width: 100%;">
+                <div style="display: flex; flex-direction: column; flex:3">
+                    {% for item in order['items'] %}
+                        <div>Item : {{item.itemName}} <br>
+                        Quantity : {{item.itemQuantity}}</div>
+                    {% endfor %}
+                </div>
+                {% if deliveredButton %}
+                <a style='margin-top: 20px' href="/update/{{order._id}}"><button>Delivered</button></a>
+                {% endif %}
+            </div>
+            <br>
+        {% endfor %}
+            </div>
+    </div>
+</body>
+</html>

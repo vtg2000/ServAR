@@ -6,8 +6,54 @@ import datetime
 import calendar
 import operator
 import pymongo
+from flask import render_template, redirect
+from bson.objectid import ObjectId
 
 orders = Blueprint('orders', __name__)
+
+
+@orders.route('/')
+def ordersPage():
+    output = []
+    orders = db['orders'].find({"delivered": False})
+    for order in orders:
+        print(order)
+        username = db['users'].find({'userId': order['userid']})
+        for user in username:
+            uname = user['username']
+        output.append({
+            'username': uname,
+            '_id': str(order['_id']),
+            'items': order['items'],
+            'orderid': order['orderid'],
+            'timestamp': str(order['timestamp'])[:-7],
+            'orderETA': order['orderETA'],
+            'orderAmount': order['orderAmount'],
+            'delivered': order['delivered']
+        })
+    return render_template("orders.html", orders=output, deliveredButton=True)
+
+
+@orders.route('/allOrders')
+def allOrdersPage():
+    output = []
+    orders = db['orders'].find()
+    for order in orders:
+        print(order)
+        username = db['users'].find({'userId': order['userid']})
+        for user in username:
+            uname = user['username']
+        output.append({
+            'username': uname,
+            '_id': str(order['_id']),
+            'items': order['items'],
+            'orderid': order['orderid'],
+            'timestamp': str(order['timestamp'])[:-7],
+            'orderETA': order['orderETA'],
+            'orderAmount': order['orderAmount'],
+            'delivered': order['delivered']
+        })
+    return render_template("orders.html", orders=output, deliveredButton=False)
 
 
 @orders.route('/api/orders')
@@ -18,12 +64,22 @@ def getAllOrders():
         output.append({
             'items': order['items'],
             'orderid': order['orderid'],
-            'timestamp': order['timestamp'],
+            'timestamp': str(order['timestamp'])[:-7],
             'orderETA': order['orderETA'],
             'orderAmount': order['orderAmount'],
             'delivered': order['delivered']
         })
     return jsonify({'result': output})
+
+
+@orders.route('/update/<orderId>')
+def updateDeliveredOrder(orderId):
+    db['orders'].update_one({"_id": ObjectId(orderId)},
+                            {"$set": {
+                                "delivered": True
+                            }},
+                            upsert=True)
+    return redirect('/')
 
 
 @orders.route('/api/orders/<userId>')
@@ -37,7 +93,7 @@ def getOrdersByUser(userId):
             '_id': str(order['_id']),
             'orderid': order['orderid'],
             'items': order['items'],
-            'timestamp': order['timestamp'],
+            'timestamp': str(order['timestamp'])[:-7],
             'orderETA': order['orderETA'],
             'orderAmount': order['orderAmount'],
             'delivered': order['delivered']
@@ -56,7 +112,7 @@ def getOrdersByOrderId(orderid):
             '_id': str(order['_id']),
             'orderid': order['orderid'],
             'items': order['items'],
-            'timestamp': order['timestamp'],
+            'timestamp': str(order['timestamp'])[:-7],
             'orderETA': order['orderETA'],
             'orderAmount': order['orderAmount'],
             'delivered': order['delivered']
