@@ -57,17 +57,38 @@ def getReviewsForItem(itemName):
 
 @reviews.route('/api/ratings/item/<itemName>')
 def getRatingsForItem(itemName):
-    rating = 0
-    count = 0
-    reviews = db['reviews'].find({"itemName": itemName})
-    for review in reviews:
-        count += 1
-        rating += review['rating']
-    if rating == 0:
-        output = 4.5
-    else:
-        # can apply any rating algo here, for now its plain average
-        output = rating / count
+    ratings = []
+    no_of_ratings = []
+    names = []
+    allRatings = db['reviews'].find()
+    nameDict = {}
+    countDict = {}
+    for rating in allRatings:
+        if rating["itemName"] in nameDict.keys():
+            nameDict[rating["itemName"]] += rating["rating"]
+            countDict[rating["itemName"]] += 1
+        else:
+            nameDict[rating["itemName"]] = rating["rating"]
+            countDict[rating["itemName"]] = 1
+    for k, v in nameDict.items():
+        nameDict[k] = nameDict[k] / countDict[k]
+    for k, v in nameDict.items():
+        names.append(k)
+        ratings.append(v)
+        no_of_ratings.append(countDict[k])
+    bayesian_rating = []
+    mul_res = []
+    for i in range(len(ratings)):
+        mul_res.append(ratings[i] * no_of_ratings[i])
+    summation = sum(mul_res)
+    for i in range(len(ratings)):
+        bay_adjusted_rating = ((no_of_ratings[i] * ratings[i]) + summation) / (
+            no_of_ratings[i] + sum(no_of_ratings))
+        bayesian_rating.append(round(bay_adjusted_rating, 1))
+    for i in range(len(bayesian_rating)):
+        if names[i] == itemName:
+            output = bayesian_rating[i]
+            count = countDict[itemName]
     return jsonify({'result': output, 'count': count})
 
 
